@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrations</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <h1 class="text-center mb-4">Registrations</h1>
+
+    <a href="/" class="btn btn-secondary mb-3">← Home</a>
+
+    <table class="table table-striped table-bordered shadow">
+        <thead class="table-dark">
+            <tr>
+                <th>Registration ID</th>
+                <th>Student Name</th>
+                <th>Course Name</th>
+                <th>Registration Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for registration in registrations %}
+            <tr>
+                <td>{{ registration.registration_id }}</td>
+                <td>{{ registration.full_name }}</td>
+                <td>{{ registration.course_name }}</td>
+                <td>{{ registration.registration_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
