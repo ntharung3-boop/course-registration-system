@@ -26,6 +26,13 @@
             <p><strong>Professor:</strong> {{ course.professor_name }}</p>
             <p><strong>Credits:</strong> {{ course.credits }}</p>
             <p><strong>Capacity:</strong> {{ course.capacity }}</p>
+<br>
+
+<a href="/delete-course/{{ course.course_id }}"
+   class="delete-btn"
+   onclick="return confirm('Are you sure you want to delete this course?')">
+   Delete Course
+</a>
             <p><strong>Enrolled:</strong> {{ course.enrollments }}</p>
 
             {% if course.course_name == 'Cloud Computing' %}

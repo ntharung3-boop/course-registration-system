@@ -470,3 +470,16 @@ tbody tr:hover {
 .faculty-card:hover {
     transform: translateY(-8px);
 }
+.delete-btn{
+    background:#dc3545;
+    color:white;
+    padding:8px 14px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+    transition:.3s;
+}
+
+.delete-btn:hover{
+    background:#b02a37;
+}

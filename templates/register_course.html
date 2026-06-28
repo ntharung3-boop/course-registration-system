@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register Course</title>
+</head>
+<body>
+
+    <h1>Register Student to Course</h1>
+
+    <a href="/">Dashboard</a> |
+    <a href="/students">Students</a> |
+    <a href="/courses">Courses</a> |
+    <a href="/registrations">Registrations</a>
+
+    <hr>
+
+    <form method="POST">
+        <label>Select Student:</label>
+        <select name="student_id" required>
+            {% for student in students %}
+            <option value="{{ student.student_id }}">
+                ST{{ "%03d"|format(student.student_id) }} - {{ student.full_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label>Select Course:</label>
+        <select name="course_id" required>
+            {% for course in courses %}
+            <option value="{{ course.course_id }}">
+                {{ course.course_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <button type="submit">Register Course</button>
+    </form>
+
+</body>
+</html>

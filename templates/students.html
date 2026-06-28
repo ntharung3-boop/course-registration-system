@@ -30,6 +30,17 @@ document.getElementById("studentSearch").addEventListener("keyup", function() {
 
 <div class="container">
     <h1>Students</h1>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+<input
+type="text"
+id="studentSearch"
+class="search-box"
+placeholder="🔍 Search students...">
+
+<a href="/add-student" class="btn">+ Add Student</a>
+
+</div>
     <table class="modern-table">
         <thead>
             <tr>
@@ -44,7 +55,7 @@ document.getElementById("studentSearch").addEventListener("keyup", function() {
         <tbody>
         {% for student in students %}
             <tr>
-                <td>{{ student.student_id }}</td>
+                ST{{ "%03d"|format(student.student_id) }}
                 <td>
                     <a href="/student/{{ student.student_id }}" class="profile-link">
                         {{ student.full_name }}
@@ -59,5 +70,20 @@ document.getElementById("studentSearch").addEventListener("keyup", function() {
     </table>
 </div>
 
+<script>
+document.getElementById("studentSearch").addEventListener("keyup", function () {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(function(row) {
+        row.style.display = row.innerText.toLowerCase().includes(filter)
+            ? ""
+            : "none";
+    });
+});
+</script>
+
+</body>
+</html>
 </body>
 </html>

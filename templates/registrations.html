@@ -23,6 +23,7 @@
                 <th>Professor</th>
                 <th>Status</th>
                 <th>Registration Date</th>
+<th>Action</th>
             </tr>
         </thead>
 <script>
@@ -55,6 +56,13 @@ document.getElementById("registrationSearch").addEventListener("keyup", function
             <td>{{ registration.status }}</td>
 
             <td>{{ registration.registration_date }}</td>
+<td>
+    <a href="/delete-registration/{{ registration.registration_id }}"
+       class="delete-btn"
+       onclick="return confirm('Delete this registration?');">
+        Delete
+    </a>
+</td>
 
         </tr>
 

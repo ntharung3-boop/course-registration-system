@@ -8,40 +8,33 @@
 <body>
 
 <nav class="navbar">
-    <div class="logo">
-        🎓 UE Academic Portal
-    </div>
+    <div class="logo">🎓 UE Academic Portal</div>
 </nav>
 
 <div class="hero">
-
     <h1>Course Registration System</h1>
-
-    <p>
-        Cloud Computing Academic Management Platform
-    </p>
-
+    <p>Cloud Computing Academic Management Platform</p>
 </div>
 
 <div class="stats">
 
     <div class="stat-card">
-        <h2>{{ stats.students }}</h2>
+        <h2>{{ total_students }}</h2>
         <p>Students</p>
     </div>
 
     <div class="stat-card">
-        <h2>{{ stats.professors }}</h2>
+        <h2>{{ total_professors }}</h2>
         <p>Professors</p>
     </div>
 
     <div class="stat-card">
-        <h2>{{ stats.courses }}</h2>
+        <h2>{{ total_courses }}</h2>
         <p>Courses</p>
     </div>
 
     <div class="stat-card">
-        <h2>{{ stats.registrations }}</h2>
+        <h2>{{ total_registrations }}</h2>
         <p>Registrations</p>
     </div>
 
@@ -50,75 +43,48 @@
 <div class="menu">
 
     <a href="/students" class="menu-card">
-        👨‍🎓
+        <div>👨‍🎓</div>
         <h2>Students</h2>
-        <p>Browse all registered students</p>
+        <p>View and manage students</p>
+    </a>
+
+    <a href="/add-student" class="menu-card">
+        <div>➕</div>
+        <h2>Add Student</h2>
+        <p>Add a new student record</p>
+    </a>
+
+    <a href="/courses" class="menu-card">
+        <div>📚</div>
+        <h2>Courses</h2>
+        <p>View available courses</p>
+    </a>
+
+    <a href="/add-course" class="menu-card">
+        <div>➕</div>
+        <h2>Add Course</h2>
+        <p>Create a new course</p>
+    </a>
+
+    <a href="/register-course" class="menu-card">
+        <div>📝</div>
+        <h2>Register Course</h2>
+        <p>Register student to course</p>
+    </a>
+
+    <a href="/registrations" class="menu-card">
+        <div>📋</div>
+        <h2>Registrations</h2>
+        <p>View student enrollments</p>
     </a>
 
     <a href="/professors" class="menu-card">
-        👨‍🏫
+        <div>👨‍🏫</div>
         <h2>Professors</h2>
         <p>Faculty profiles and expertise</p>
     </a>
 
-    <a href="/courses" class="menu-card">
-        📚
-        <h2>Courses</h2>
-        <p>Available cloud computing courses</p>
-    </a>
-
-    <a href="/registrations" class="menu-card">
-        📝
-        <h2>Registrations</h2>
-        <p>Student enrollments</p>
-    </a>
-
 </div>
 
-<div class="featured">
-
-    <h2>Featured Professor</h2>
-
-    {% if featured_professor %}
-
-    <div class="faculty-highlight">
-
-        <h3>{{ featured_professor.full_name }}</h3>
-
-        <p><strong>Subject:</strong> {{ featured_professor.subject }}</p>
-
-        <p><strong>Specialization:</strong> {{ featured_professor.specialization }}</p>
-
-        <p><strong>Experience:</strong> {{ featured_professor.experience }}</p>
-
-    </div>
-
-    {% endif %}
-
-</div>
-
-<div class="courses-section">
-
-    <h2>Most Popular Courses</h2>
-
-    <table>
-
-        <tr>
-            <th>Course</th>
-            <th>Professor</th>
-            <th>Enrollments</th>
-        </tr>
-
-        {% for c in popular_courses %}
-        <tr>
-            <td>{{ c.course_name }}</td>
-            <td>{{ c.professor_name }}</td>
-            <td>{{ c.enrollments }}</td>
-        </tr>
-        {% endfor %}
-
-    </table>
-
-</div>
 </body>
 </html>

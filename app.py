@@ -1,161 +1,172 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 
 app = Flask(__name__)
+db = mysql.connector.connect(
+    host="localhost",
+    user="course_user",
+    password="Course@123",
+    database="course_registration"
+)
 
-def get_db():
-    return mysql.connector.connect(
-        host="localhost",
-        user="course_user",
-        password="Course@123",
-        database="course_registration"
-    )
-
-def fetch_all(query):
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cursor.close()
-    db.close()
-    return data
-
-def fetch_one(query):
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute(query)
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
-
+cursor = db.cursor(dictionary=True)
 @app.route("/")
 def home():
-    stats = {
-        "students": fetch_one("SELECT COUNT(*) AS total FROM students")["total"],
-        "professors": fetch_one("SELECT COUNT(*) AS total FROM professors")["total"],
-        "courses": fetch_one("SELECT COUNT(*) AS total FROM courses")["total"],
-        "registrations": fetch_one("SELECT COUNT(*) AS total FROM registrations")["total"]
-    }
+    cursor.execute("SELECT COUNT(*) AS total FROM students")
+    total_students = cursor.fetchone()["total"]
 
-    featured_professor = fetch_one("""
-        SELECT * FROM professors
-        WHERE full_name = 'Aaron Crandall'
-        LIMIT 1
-    """)
+    cursor.execute("SELECT COUNT(*) AS total FROM courses")
+    total_courses = cursor.fetchone()["total"]
 
-    popular_courses = fetch_all("""
-        SELECT 
-            c.course_name,
-            p.full_name AS professor_name,
-            COUNT(r.registration_id) AS enrollments
-        FROM courses c
-        LEFT JOIN professors p ON c.professor_id = p.professor_id
-        LEFT JOIN registrations r ON c.course_id = r.course_id
-        GROUP BY c.course_id, c.course_name, p.full_name
-        ORDER BY
-            CASE WHEN c.course_name = 'Cloud Computing' THEN 0 ELSE 1 END,
-            enrollments DESC
-        LIMIT 5
-    """)
+    cursor.execute("SELECT COUNT(*) AS total FROM registrations")
+    total_registrations = cursor.fetchone()["total"]
+
+    cursor.execute("SELECT COUNT(*) AS total FROM professors")
+    total_professors = cursor.fetchone()["total"]
 
     return render_template(
         "index.html",
-        stats=stats,
-        featured_professor=featured_professor,
-        popular_courses=popular_courses
+        total_students=total_students,
+        total_courses=total_courses,
+        total_registrations=total_registrations,
+       total_professors=total_professors
     )
-
 @app.route("/students")
 def students():
-    students = fetch_all("SELECT * FROM students ORDER BY student_id")
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
     return render_template("students.html", students=students)
-
-@app.route("/professors")
-def professors():
-    professors = fetch_all("""
-        SELECT 
-            p.professor_id,
-            p.full_name,
-            p.subject,
-            p.specialization,
-            p.experience,
-            COUNT(c.course_id) AS courses_count
-        FROM professors p
-        LEFT JOIN courses c ON p.professor_id = c.professor_id
-        GROUP BY p.professor_id, p.full_name, p.subject, p.specialization, p.experience
-        ORDER BY p.professor_id
-    """)
-    return render_template("professors.html", professors=professors)
 
 @app.route("/courses")
 def courses():
-    courses = fetch_all("""
-        SELECT
-            c.course_id,
-            c.course_name,
-            p.full_name AS professor_name,
-            c.credits,
-            c.capacity,
-            COUNT(r.registration_id) AS enrollments
-        FROM courses c
-        LEFT JOIN professors p ON c.professor_id = p.professor_id
-        LEFT JOIN registrations r ON c.course_id = r.course_id
-        GROUP BY c.course_id, c.course_name, p.full_name, c.credits, c.capacity
-        ORDER BY
-            CASE WHEN c.course_name = 'Cloud Computing' THEN 0 ELSE 1 END,
-            enrollments DESC,
-            c.course_name ASC
-    """)
+    cursor.execute("SELECT * FROM courses")
+    courses = cursor.fetchall()
     return render_template("courses.html", courses=courses)
+
+@app.route("/register-course", methods=["GET", "POST"])
+def register_course():
+    if request.method == "POST":
+        student_id = request.form["student_id"]
+        course_id = request.form["course_id"]
+
+        cursor.execute(
+            "INSERT INTO registrations (student_id, course_id) VALUES (%s, %s)",
+            (student_id, course_id)
+        )
+        db.commit()
+
+        return redirect(url_for("registrations"))
+
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM courses")
+    courses = cursor.fetchall()
+
+    return render_template(
+        "register_course.html",
+        students=students,
+        courses=courses
+    )
 
 @app.route("/registrations")
 def registrations():
-    registrations = fetch_all("""
-        SELECT
-            r.registration_id,
-            s.full_name AS student_name,
-            s.department,
-            c.course_name,
-            p.full_name AS professor_name,
-            r.registration_date,
-            r.status
-        FROM registrations r
-        JOIN students s ON r.student_id = s.student_id
-        JOIN courses c ON r.course_id = c.course_id
-        LEFT JOIN professors p ON c.professor_id = p.professor_id
-        ORDER BY r.registration_id
-    """)
+    query = """
+SELECT
+    registrations.registration_id,
+    students.full_name AS student_name,
+    students.department,
+    courses.course_name,
+    professors.full_name AS professor_name,
+    registrations.status,
+    registrations.registration_date
+FROM registrations
+JOIN students
+    ON registrations.student_id = students.student_id
+JOIN courses
+    ON registrations.course_id = courses.course_id
+LEFT JOIN professors
+    ON courses.professor_id = professors.professor_id
+ORDER BY registrations.registration_id DESC
+"""
+    cursor.execute(query)
+    registrations = cursor.fetchall()
     return render_template("registrations.html", registrations=registrations)
+@app.route("/add-student", methods=["GET", "POST"])
+def add_student():
+    if request.method == "POST":
+        full_name = request.form["full_name"]
+        email = request.form["email"]
+        department = request.form["department"]
+        semester = request.form["semester"]
 
-@app.route("/student/<int:student_id>")
-def student_profile(student_id):
-    student = fetch_one(f"""
-        SELECT * FROM students
-        WHERE student_id = {student_id}
-    """)
+        cursor.execute(
+            """
+            INSERT INTO students (full_name, email, department, semester)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (full_name, email, department, semester)
+        )
+        db.commit()
 
-    courses = fetch_all(f"""
-        SELECT
-            c.course_name,
-            c.credits,
-            p.full_name AS professor_name,
-            r.registration_date,
-            r.status
-        FROM registrations r
-        JOIN courses c ON r.course_id = c.course_id
-        LEFT JOIN professors p ON c.professor_id = p.professor_id
-        WHERE r.student_id = {student_id}
-        ORDER BY c.course_name
-    """)
+        return redirect(url_for("students"))
 
-    total_credits = sum(course["credits"] for course in courses)
+    return render_template("add_student.html")
+@app.route("/add-course", methods=["GET", "POST"])
+def add_course():
+
+    cursor.execute("SELECT professor_id, full_name FROM professors")
+    professors = cursor.fetchall()
+
+    if request.method == "POST":
+
+        course_name = request.form["course_name"]
+        professor_id = request.form["professor_id"]
+        credits = request.form["credits"]
+        capacity = request.form["capacity"]
+
+        cursor.execute("""
+            INSERT INTO courses
+            (course_name, professor_id, credits, capacity)
+            VALUES (%s,%s,%s,%s)
+        """,
+        (course_name, professor_id, credits, capacity))
+
+        db.commit()
+
+        return redirect(url_for("courses"))
 
     return render_template(
-        "student_profile.html",
-        student=student,
-        courses=courses,
-        total_credits=total_credits
+        "add_course.html",
+        professors=professors
     )
+@app.route("/delete-registration/<int:registration_id>")
+def delete_registration(registration_id):
+    cursor.execute(
+        "DELETE FROM registrations WHERE registration_id = %s",
+        (registration_id,)
+    )
+    db.commit()
+
+    return redirect(url_for("registrations"))
+@app.route("/delete-course/<int:course_id>")
+def delete_course(course_id):
+    try:
+        cursor.execute(
+            "DELETE FROM courses WHERE course_id = %s",
+            (course_id,)
+        )
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print("Error deleting course:", e)
+
+    return redirect(url_for("courses"))
+
+@app.route("/professors")
+def professors():
+    cursor.execute("SELECT * FROM professors")
+    professors = cursor.fetchall()
+    return render_template("professors.html", professors=professors)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True, host="0.0.0.0")
