@@ -2,60 +2,41 @@
 <html lang="en">
 
 <head>
-
-<meta charset="UTF-8">
-<title>Courses</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    <meta charset="UTF-8">
+    <title>Courses</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<div class="container mt-5">
+<div class="container">
 
-<h1 class="text-center mb-4">
-Courses
-</h1>
+    <h1>Courses</h1>
 
-<a href="/" class="btn btn-secondary mb-3">
-← Home
-</a>
+    <a href="/" class="btn">← Home</a>
 
-<table class="table table-striped table-bordered shadow">
+    <div class="card-grid">
 
-<thead class="table-dark">
+        {% for course in courses %}
 
-<tr>
+        <div class="faculty-card">
 
-<th>ID</th>
-<th>Course Name</th>
-<th>Instructor</th>
-<th>Credits</th>
+            <h2>{{ course.course_name }}</h2>
 
-</tr>
+            <p><strong>Professor:</strong> {{ course.professor_name }}</p>
+            <p><strong>Credits:</strong> {{ course.credits }}</p>
+            <p><strong>Capacity:</strong> {{ course.capacity }}</p>
+            <p><strong>Enrolled:</strong> {{ course.enrollments }}</p>
 
-</thead>
+            {% if course.course_name == 'Cloud Computing' %}
+                <p><span class="badge-top">Top Cloud Course</span></p>
+            {% endif %}
 
-<tbody>
+        </div>
 
-{% for course in courses %}
+        {% endfor %}
 
-<tr>
-
-<td>{{ course.course_id }}</td>
-<td>{{ course.course_name }}</td>
-<td>{{ course.instructor }}</td>
-<td>{{ course.credits }}</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
+    </div>
 
 </div>
 

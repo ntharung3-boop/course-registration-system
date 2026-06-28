@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Faculty & Professors</h1>
+
+    <a href="/" class="btn">← Home</a>
+
+    <div class="card-grid">
+
+        {% for professor in professors %}
+
+        <div class="faculty-card">
+
+            <h2>{{ professor.full_name }}</h2>
+
+            <p><strong>Subject:</strong> {{ professor.subject }}</p>
+            <p><strong>Specialization:</strong> {{ professor.specialization }}</p>
+            <p><strong>Experience:</strong> {{ professor.experience }}</p>
+            <p><strong>Courses Taught:</strong> {{ professor.courses_count }}</p>
+
+            {% if professor.full_name == 'Aaron Crandall' %}
+                <p><span class="badge-top">Cloud Computing Instructor</span></p>
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

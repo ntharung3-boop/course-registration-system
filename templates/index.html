@@ -1,78 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Registration System</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<nav class="navbar navbar-dark bg-primary">
-    <div class="container">
-        <span class="navbar-brand fw-bold">
-            🎓 Course Registration System
-        </span>
+<nav class="navbar">
+    <div class="logo">
+        🎓 UE Academic Portal
     </div>
 </nav>
 
-<div class="container mt-5">
+<div class="hero">
 
-    <h1 class="text-center mb-4">
-        Welcome to Course Registration System
-    </h1>
+    <h1>Course Registration System</h1>
 
-    <div class="row">
+    <p>
+        Cloud Computing Academic Management Platform
+    </p>
 
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-body text-center">
+</div>
 
-                    <h3>Students</h3>
+<div class="stats">
 
-                    <a href="/students" class="btn btn-primary">
-                        View Students
-                    </a>
+    <div class="stat-card">
+        <h2>{{ stats.students }}</h2>
+        <p>Students</p>
+    </div>
 
-                </div>
-            </div>
-        </div>
+    <div class="stat-card">
+        <h2>{{ stats.professors }}</h2>
+        <p>Professors</p>
+    </div>
 
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-body text-center">
+    <div class="stat-card">
+        <h2>{{ stats.courses }}</h2>
+        <p>Courses</p>
+    </div>
 
-                    <h3>Courses</h3>
-
-                    <a href="/courses" class="btn btn-success">
-                        View Courses
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-body text-center">
-
-                    <h3>Registrations</h3>
-
-                    <a href="/registrations" class="btn btn-warning">
-                        View Registrations
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
+    <div class="stat-card">
+        <h2>{{ stats.registrations }}</h2>
+        <p>Registrations</p>
     </div>
 
 </div>
 
+<div class="menu">
+
+    <a href="/students" class="menu-card">
+        👨‍🎓
+        <h2>Students</h2>
+        <p>Browse all registered students</p>
+    </a>
+
+    <a href="/professors" class="menu-card">
+        👨‍🏫
+        <h2>Professors</h2>
+        <p>Faculty profiles and expertise</p>
+    </a>
+
+    <a href="/courses" class="menu-card">
+        📚
+        <h2>Courses</h2>
+        <p>Available cloud computing courses</p>
+    </a>
+
+    <a href="/registrations" class="menu-card">
+        📝
+        <h2>Registrations</h2>
+        <p>Student enrollments</p>
+    </a>
+
+</div>
+
+<div class="featured">
+
+    <h2>Featured Professor</h2>
+
+    {% if featured_professor %}
+
+    <div class="faculty-highlight">
+
+        <h3>{{ featured_professor.full_name }}</h3>
+
+        <p><strong>Subject:</strong> {{ featured_professor.subject }}</p>
+
+        <p><strong>Specialization:</strong> {{ featured_professor.specialization }}</p>
+
+        <p><strong>Experience:</strong> {{ featured_professor.experience }}</p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<div class="courses-section">
+
+    <h2>Most Popular Courses</h2>
+
+    <table>
+
+        <tr>
+            <th>Course</th>
+            <th>Professor</th>
+            <th>Enrollments</th>
+        </tr>
+
+        {% for c in popular_courses %}
+        <tr>
+            <td>{{ c.course_name }}</td>
+            <td>{{ c.professor_name }}</td>
+            <td>{{ c.enrollments }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</div>
 </body>
 </html>
